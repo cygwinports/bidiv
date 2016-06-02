@@ -1,0 +1,78 @@
+Description: properly check terminal width
+Author: Baruch Even <baruch@debian.org>
+
+--- a/bidiv.c
++++ b/bidiv.c
+@@ -32,6 +32,8 @@
+ #include <string.h>
+ #endif
+ 
++#include "term.h"
++
+ char *progname;
+ 
+ int width=80;
+@@ -235,23 +237,15 @@ int
+ main(int argc, char *argv[])
+ {
+ 	FILE *fp;
+-	char *s;
+-	int i,c;
++	int c;
+ 	int status=0;
+ 
+ 	/* TODO: get width from tty setup, COLUMNS variable, and/or
+ 	   command line option */
+ 	progname=argv[0];
+ 
+-	/* The COLUMNS variable (set by zsh and bash, for example)
+-	   overrides the default 'width'.
+-	   TODO: also try to read the column number directly from the tty.
+-	*/
+-	if((s=getenv("COLUMNS"))){
+-		i=atoi(s);
+-		if(i>0)
+-			width=i;
+-	}
++	/* Read the size from the tty or the COLUMNS var, default to 80 otherwise */
++	width = term_size_get();
+ 
+ #ifdef HAVE_LOCALE
+ 	setlocale(LC_CTYPE, "");
+--- /dev/null
++++ b/term.h
+@@ -0,0 +1,9 @@
++#ifndef _TERM_H_
++#define _TERM_H_
++
++/* Returns terminal size, attempt to get it from tty, COLUMNS or default to 80
++ * otherwise
++ */
++int term_size_get(void);
++
++#endif
+--- /dev/null
++++ b/term.c
+@@ -0,0 +1,22 @@
++#include <sys/ioctl.h>
++#include <stdlib.h>
++#include <limits.h>
++#include "term.h"
++
++int term_size_get(void)
++{
++    struct winsize win;
++    int cols;
++    char *col_str;
++    int err;
++
++    err = ioctl(1, TIOCGWINSZ, (char *)&win);
++    if (err != -1 && win.ws_col > 0)
++	return win.ws_col;
++ 
++    col_str = getenv("COLUMNS");
++    if (!col_str || (cols = atoi(col_str)) <= 0 || cols == INT_MAX)
++	cols = 80;
++
++    return cols;
++}

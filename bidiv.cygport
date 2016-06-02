@@ -1,0 +1,33 @@
+NAME="bidiv"
+VERSION=1.5
+RELEASE=1
+CATEGORY="Text"
+SUMMARY="Bidirectional text filter"
+DESCRIPTION="bidiv is a filter, or viewer, for birectional text stored in
+logical-order. It converts such text into visual-order text which can be
+viewed on terminals that do not handle bidirectionality."
+HOMEPAGE="http://www.ivrix.org.il/"
+md5sum=e1a951dac153c3998e6276e11f681ac4
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/bidiv/bidiv-${VERSION}.tgz/${md5sum}/bidiv-${VERSION}.tgz"
+SRC_DIR=${NAME}
+PATCH_URI="
+	debian/patches/try_utf8_fix
+	debian/patches/makefile
+	debian/patches/fribidi_019
+	debian/patches/hyphen_minus
+	debian/patches/term_size_get
+	debian/patches/type_fix
+	debian/patches/cast_fix
+"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	cygmake CC_OPT_FLAGS="${CFLAGS}"
+}
+
+src_install() {
+	cd ${B}
+	dobin bidiv.exe
+	doman bidiv.1
+}

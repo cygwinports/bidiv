@@ -1,0 +1,53 @@
+Description: if-def out a variable that is unused if TRY_UTF8.
+Author: Baruch Even <baruch@debian.org>
+
+--- a/bidiv.c
++++ b/bidiv.c
+@@ -24,6 +24,7 @@
+ 
+ /* In the future, this should be done with autoconf */
+ #define HAVE_LOCALE
++#define TRY_UTF8
+ 
+ #ifdef HAVE_LOCALE
+ #include <locale.h>
+@@ -47,7 +48,10 @@ int out_utf8=0;
+ void
+ bidiv(FILE *fp)
+ {
+-	char *in, *out;
++#ifndef TRY_UTF8
++	char *in;
++#endif
++	char *out;
+ 	FriBidiChar *unicode_in, *unicode_out;
+ 	int len, i, c;
+ 	int rtl_line;
+@@ -62,7 +66,9 @@ bidiv(FILE *fp)
+ 	*/
+ 	int newline=1, newpara=1;
+ 
++#ifndef TRY_UTF8
+ 	in=(char *)malloc(width+1);
++#endif
+ 	out=(char *)malloc(width*7+1); /* 7 is the maximum number of
+ 					  bytes in one UTF8 char? */
+ 	/* We use (width+1) not just width, to leave place for a double-
+@@ -101,7 +107,6 @@ bidiv(FILE *fp)
+ 			   option to bidiv. This is enabled when TRY_UTF8
+ 			   is defined
+ 			*/
+-#define TRY_UTF8
+ 			if((c=getc(fp))==EOF)
+ 				break;
+ 			else if(c=='\r'){
+@@ -216,7 +221,9 @@ bidiv(FILE *fp)
+ 		puts(out);
+ 	}
+ 	/* Free the memory we have allocated */
++#ifndef TRY_UTF8
+ 	free(in);
++#endif
+ 	free(out);
+ 	free(unicode_in);
+ 	free(unicode_out);

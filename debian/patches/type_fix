@@ -1,0 +1,23 @@
+Description: use proper enumerator type
+Author: Tzafrir Cohen <tzafrir@debian.org>
+
+--- a/bidiv.c
++++ b/bidiv.c
+@@ -42,7 +42,7 @@ int width=80;
+    change the base direction on every newline, and =2 means change it every
+    paragraph (where a paragraph starts after a completely empty line.
+ */
+-FriBidiCharType base_dir=FRIBIDI_TYPE_N, prev_base_dir=FRIBIDI_TYPE_LTR;
++FriBidiParType base_dir=FRIBIDI_TYPE_N, prev_base_dir=FRIBIDI_TYPE_LTR;
+ int auto_basedir=2;
+ int justify=1;
+ int out_utf8=0;
+@@ -199,7 +199,7 @@ bidiv(FILE *fp)
+ 			fribidi_log2vis(unicode_in, len, &base_dir,
+ 					unicode_out, NULL, NULL, NULL);
+ #else
+-			FriBidiCharType tmp_dir=prev_base_dir;
++			FriBidiParType tmp_dir=prev_base_dir;
+ 			fribidi_log2vis(unicode_in, len, &tmp_dir,
+ 					unicode_out, NULL, NULL, NULL);
+ 			rtl_line= (tmp_dir==FRIBIDI_TYPE_RTL);

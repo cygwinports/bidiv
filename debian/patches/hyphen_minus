@@ -1,0 +1,14 @@
+Description: Fix hyphen/minus confusion in man page
+Author: Baruch Even <baruch@debian.org>
+
+--- bidiv-1.5.orig/bidiv.1
++++ bidiv-1.5/bidiv.1
+@@ -174,7 +174,7 @@
+ 2.
+ man something | bidiv | less
+ 
+-(or groff -man -Tlatin1 something.1 |sed 's/.^H\\(.\\)/\\1/g' |../bidiv -w 65)
++(or groff \-man \-Tlatin1 something.1 |sed 's/.^H\\(.\\)/\\1/g' |../bidiv \-w 65)
+ .TP 3 
+ 3.
+ set "bidiv" as a filter for your mail program (mutt, pine, etc.) for viewing

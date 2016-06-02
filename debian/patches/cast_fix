@@ -1,0 +1,23 @@
+Description: Hush a warning with a cast.
+Author: Tzafrir Cohen <tzafrir@debian.org>
+
+--- a/bidiv.c
++++ b/bidiv.c
+@@ -145,7 +145,7 @@ bidiv(FILE *fp)
+ 					ungetc(c1, fp);
+ 					fribidi_charset_to_unicode(
+ 						FRIBIDI_CHAR_SET_ISO8859_8,
+-						&c, 1, &unicode_in[len]);
++						(char *)&c, 1, &unicode_in[len]);
+ 				} else
+ 				unicode_in[len]=((c & 037) << 6) + (c1 & 077);
+ 				newline=0;
+@@ -158,7 +158,7 @@ bidiv(FILE *fp)
+ 				   as the output encoding). */
+ 				fribidi_charset_to_unicode(
+ 					FRIBIDI_CHAR_SET_ISO8859_8,
+-					&c, 1, &unicode_in[len]);
++					(char *)&c, 1, &unicode_in[len]);
+ #else
+ 				in[len]=c;
+ #endif
